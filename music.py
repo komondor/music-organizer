@@ -3,7 +3,6 @@
 from gmusicapi import Mobileclient
 import sys
 
-
 collection = Mobileclient()
 
 # collection.perform_oauth()
@@ -20,11 +19,9 @@ def encode_utf(text):
 
 if sys.argv[1] == "count":
     for playlist in allplaylist:
-        i = 0
         name = encode_utf(playlist['name'])
-        for track in playlist['tracks']:
-            i = i + 1
-        print("Playlist name: {} Count: {}".format(name, i))
+        print("Playlist name: {} Count: {} Description: {}".format(
+            name, len(playlist['tracks']), playlist["description"]))
 
 
 if sys.argv[1] == "find":

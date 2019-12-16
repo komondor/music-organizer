@@ -1,13 +1,14 @@
 # music-organizer
 
-## what it does
+## commands
 
-It count the number of songs per google play music playlist
+- `count` -> return playlist name: playlist track count: playlist description
+- `find whatever` -> find of whatever matches a playlist track. return playlist name: list of track that matches for each playlist
+
+## development
+
+- `nodemon --exec "bsh test.sh" ./music.py`
 
 ## tools
 
 - gmusicapi
-
-## development
-
-- `nodemon --exec "python" ./music.py`

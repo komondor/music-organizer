@@ -1,1 +1,1 @@
-@py.exe C:\path\to\music.py %*
+@C:\Python27\python.exe C:\path\to\music.py %*
