@@ -5,7 +5,7 @@ import re
 
 collection = Mobileclient()
 
-
+# the boss
 def main():
 
     try:
@@ -69,16 +69,14 @@ def main():
                 for chanson in result[name]:
                     print("\t - {}".format(chanson))
 
-
+# a variable can change identity
 def filterTags(rawData):
-    tagsWithouWhitespaces = rawData.replace(" ", "")
-    tagsWithoutQuoteMarks = tagsWithouWhitespaces.replace("\"", "")
-    tagsList = re.search("(?<=Tags:\[)(.*?)(?=\])", tagsWithoutQuoteMarks)
-    tagsText = re.split(",", tagsList.group(0))
-    # tagsText = ",".join(tagsText)
-    # tagsText = tagsText.replace(",",", ")
-    return tagsText
+    tags = rawData.replace(" ", "")
+    tags = tags.replace("\"", "")
+    tags = re.search("(?<=Tags:\[)(.*?)(?=\])", tags)
+    tags = re.split(",", tags.group(0))
+    return tags
 
-
+# the buzz
 if __name__ == '__main__' :
     main()
