@@ -1,5 +1,12 @@
 # music-organizer
 
+## The Rationale
+
+This is a personal project. I am using Google Play Music. I like creating playist. This tool is very opiniated. 
+It tells the number of songs per playlist. Along with Tags. 
+
+Also. Find if a song already live in one of your playlist.
+
 ## notes
 
 - clean up always at the end. make it work first
