@@ -1,72 +1,84 @@
 from gmusicapi import Mobileclient
 from tabulate import tabulate
 import sys
+import re
 
 collection = Mobileclient()
 
-try:
-    sys.argv[1]
-except:
-    print("please provide an argument: login, count, find")
-    sys.exit()
 
-if sys.argv[1] == "login":
-    collection.perform_oauth()
+def main():
 
-try:
-    collection.oauth_login(collection.FROM_MAC_ADDRESS)
-except:
-    print("Not loggin. Try the following command: music login")
-else:
+    try:
+        sys.argv[1]
+    except:
+        print("please provide an argument: login, count, find")
+        sys.exit()
 
-    allplaylist = collection.get_all_user_playlist_contents()
-    allplaylist.sort(key=lambda e: e['name'], reverse=False)
-    allplaylist.pop(0)
+    if sys.argv[1] == "login":
+        collection.perform_oauth()
 
-    def encode_utf(text):
-        return text.encode('utf-8').strip()
+    try:
+        collection.oauth_login(collection.FROM_MAC_ADDRESS)
+    except:
+        print("Not loggin. Try the following command: music login")
+    else:
 
-    # if sys.argv[1] == "logout":
-    #     try:
-    #         collection.deauthorize_device(collection.FROM_MAC_ADDRESS)
-    #     finally:
-    #         sys.exit()
+        allplaylist = collection.get_all_user_playlist_contents()
+        allplaylist.sort(key=lambda e: e['name'], reverse=False)
+        allplaylist.pop(0)
 
-    if sys.argv[1] == "count":
+        def encode_utf(text):
+            return text.encode('utf-8').strip()
 
-        list = []
-        for playlist in allplaylist:
-            # name = encode_utf(playlist['name'])
-            list.append([playlist['name'], len(
-                playlist['tracks']), playlist["description"]])
+        if sys.argv[1] == "count":
 
-        print(tabulate(list, headers=[
-              "Playist Name", "Number of tracks", "Tags"]))
+            list = []
+            for playlist in allplaylist:
+                tagsText = filterTags(playlist['description'])
+                list.append([playlist['name'], len(
+                    playlist['tracks']), tagsText])
 
-    if sys.argv[1] == "find":
+            print(tabulate(list, headers=[
+                "Playist Name", "Number of tracks", "Tags"]))
 
-        search_query = sys.argv[2]
-        result = {}
+        if sys.argv[1] == "find":
 
-        for playlist in allplaylist:
+            search_query = sys.argv[2]
+            result = {}
 
-            playlist_name = playlist['name'].encode('utf-8').strip()
-            song_list = []
+            for playlist in allplaylist:
 
-            for track in playlist['tracks']:
-                if 'track' in track:
-                    album = encode_utf(track["track"]["album"])
-                    artist = encode_utf(track["track"]["artist"])
-                    title = encode_utf(track["track"]["title"])
-                    verification_query = album + artist + title
+                playlist_name = playlist['name'].encode('utf-8').strip()
+                song_list = []
 
-                    if search_query in verification_query:
-                        song_list.append("{} by {}".format(title, artist))
+                for track in playlist['tracks']:
+                    if 'track' in track:
+                        album = encode_utf(track["track"]["album"])
+                        artist = encode_utf(track["track"]["artist"])
+                        title = encode_utf(track["track"]["title"])
+                        verification_query = album + artist + title
 
-            if len(song_list) != 0:
-                result[playlist_name] = song_list
+                        if search_query in verification_query:
+                            song_list.append("{} by {}".format(title, artist))
 
-        for name in result:
-            print(name)
-            for chanson in result[name]:
-                print("\t - {}".format(chanson))
+                if len(song_list) != 0:
+                    result[playlist_name] = song_list
+
+            for name in result:
+                print(name)
+                for chanson in result[name]:
+                    print("\t - {}".format(chanson))
+
+
+def filterTags(rawData):
+    tagsWithouWhitespaces = rawData.replace(" ", "")
+    tagsWithoutQuoteMarks = tagsWithouWhitespaces.replace("\"", "")
+    tagsList = re.search("(?<=Tags:\[)(.*?)(?=\])", tagsWithoutQuoteMarks)
+    tagsText = re.split(",", tagsList.group(0))
+    # tagsText = ",".join(tagsText)
+    # tagsText = tagsText.replace(",",", ")
+    return tagsText
+
+
+if __name__ == '__main__' :
+    main()

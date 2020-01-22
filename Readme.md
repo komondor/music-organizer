@@ -9,6 +9,7 @@
 
 - `pip install gmusicapi`
 - `pip install tabulate`
+- on mac only: `chmod 755 music`
 - add bin path to your environment variable path
 
 ## command
