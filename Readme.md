@@ -2,9 +2,13 @@
 
 ## The Rationale
 
-This is a personal project. I am using Google Play Music. I like creating playlist. This tool is very opiniated. 
-It tells the number of songs per playlist. Along with Tags. 
+This is a personal project. 
 
+I am using Google Play Music. 
+I like creating playlist. 
+
+This tool is very opiniated. 
+It tells the number of songs per playlist. Along with Tags. 
 Also. Find if a song already lived in one of your playlist.
 
 ## notes
