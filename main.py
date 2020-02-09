@@ -66,7 +66,7 @@ def main():
                     for song in song_list:
                         result.append(song)
 
-        print(tabulate(result, headers=["playlist", "title", "artist"]))
+            print(tabulate(result, headers=["playlist", "title", "artist"]))
 
 
 def filterTags(rawData):
