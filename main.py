@@ -5,7 +5,7 @@ import re
 
 collection = Mobileclient()
 
-# the boss
+
 def main():
 
     try:
@@ -44,7 +44,8 @@ def main():
         if sys.argv[1] == "find":
 
             search_query = sys.argv[2]
-            result = {}
+            allplaylist.pop(0)
+            result = []
 
             for playlist in allplaylist:
 
@@ -58,18 +59,16 @@ def main():
                         title = encode_utf(track["track"]["title"])
                         verification_query = album + artist + title
 
-                        if search_query in verification_query:
-                            song_list.append("{} by {}".format(title, artist))
+                        if search_query in verification_query.decode("utf-8"):
+                            song_list.append([playlist_name, title, artist])
 
                 if len(song_list) != 0:
-                    result[playlist_name] = song_list
+                    for song in song_list:
+                        result.append(song)
 
-            for name in result:
-                print(name)
-                for chanson in result[name]:
-                    print("\t - {}".format(chanson))
+        print(tabulate(result, headers=["playlist", "title", "artist"]))
 
-# a variable can change identity
+
 def filterTags(rawData):
     tags = rawData.replace(" ", "")
     tags = tags.replace("\"", "")
@@ -77,6 +76,6 @@ def filterTags(rawData):
     tags = re.split(",", tags.group(0))
     return tags
 
-# the buzz
-if __name__ == '__main__' :
+
+if __name__ == '__main__':
     main()
