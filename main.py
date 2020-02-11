@@ -38,8 +38,7 @@ def main():
                 list.append([playlist['name'], len(
                     playlist['tracks']), tagsText])
 
-            print(tabulate(list, headers=[
-                "Playist Name", "Number of tracks", "Tags"]))
+            print(tabulate(list, headers=["playlist", "count", "tags"]))
 
         if sys.argv[1] == "find":
 
@@ -54,12 +53,12 @@ def main():
 
                 for track in playlist['tracks']:
                     if 'track' in track:
-                        album = encode_utf(track["track"]["album"])
-                        artist = encode_utf(track["track"]["artist"])
-                        title = encode_utf(track["track"]["title"])
+                        album = track["track"]["album"]
+                        artist = track["track"]["artist"]
+                        title = track["track"]["title"]
                         verification_query = album + artist + title
 
-                        if search_query in verification_query.decode("utf-8"):
+                        if search_query in verification_query:
                             song_list.append([playlist_name, title, artist])
 
                 if len(song_list) != 0:
