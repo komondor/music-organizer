@@ -2,11 +2,13 @@ from gmusicapi import Mobileclient
 from tabulate import tabulate
 import sys
 import re
-
-collection = Mobileclient()
+from lib.oauth import Oath_Client
+from lib.utilities import Utilities
 
 
 def main():
+
+    client = Oath_Client()
 
     try:
         sys.argv[1]
@@ -14,66 +16,26 @@ def main():
         print("please provide an argument: login, count, find")
         sys.exit()
 
-    if sys.argv[1] == "login":
-        collection.perform_oauth()
+    if sys.argv[1] == "register":
+        client.register()
+        sys.exit()
+    if sys.argv[1] == "logout":
+        client.logout()
+        sys.exit()
 
-    try:
-        collection.oauth_login(collection.FROM_MAC_ADDRESS)
-    except:
-        print("Not loggin. Try the following command: music login")
+    if client.login():
+        collection = client.collection
     else:
+        print("Not loggin. Try the following command: music login")
+        sys.exit()
 
-        allplaylist = collection.get_all_user_playlist_contents()
-        allplaylist.sort(key=lambda e: e['name'], reverse=False)
-        allplaylist.pop(0)
+    api = Utilities(collection)
 
-        def encode_utf(text):
-            return text.encode('utf-8').strip()
+    if sys.argv[1] == "count":
+        api.countTrackPerPlaylist()
 
-        if sys.argv[1] == "count":
-
-            list = []
-            for playlist in allplaylist:
-                tagsText = filterTags(playlist['description'])
-                list.append([playlist['name'], len(
-                    playlist['tracks']), tagsText])
-
-            print(tabulate(list, headers=["playlist", "count", "tags"]))
-
-        if sys.argv[1] == "find":
-
-            search_query = sys.argv[2]
-            allplaylist.pop(0)
-            result = []
-
-            for playlist in allplaylist:
-
-                playlist_name = playlist['name'].encode('utf-8').strip()
-                song_list = []
-
-                for track in playlist['tracks']:
-                    if 'track' in track:
-                        album = track["track"]["album"]
-                        artist = track["track"]["artist"]
-                        title = track["track"]["title"]
-                        verification_query = album + artist + title
-
-                        if search_query in verification_query:
-                            song_list.append([playlist_name, title, artist])
-
-                if len(song_list) != 0:
-                    for song in song_list:
-                        result.append(song)
-
-            print(tabulate(result, headers=["playlist", "title", "artist"]))
-
-
-def filterTags(rawData):
-    tags = rawData.replace(" ", "")
-    tags = tags.replace("\"", "")
-    tags = re.search("(?<=Tags:\[)(.*?)(?=\])", tags)
-    tags = re.split(",", tags.group(0))
-    return tags
+    if sys.argv[1] == "find":
+        api.queryPlaylist(sys.argv[2])
 
 
 if __name__ == '__main__':
