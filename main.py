@@ -2,8 +2,8 @@ from gmusicapi import Mobileclient
 from tabulate import tabulate
 import sys
 import re
-from lib.oauth import Oath_Client
-from lib.utilities import Utilities
+from lib import Oath_Client
+from lib import Utilities
 
 
 def main():

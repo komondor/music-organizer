@@ -21,12 +21,13 @@ Also. Find if a song already lived in one of your playlist.
 - `pip install gmusicapi`
 - `pip install tabulate`
 - on mac only: `chmod 755 music`
-- add bin path to your environment variable path
 
 ## command
 
 | command      | description                                  |
 | ------------ | -------------------------------------------- |
-| login        | register this pc                             |
+| register     | register this pc                             |
+| login        | login                                        |
+| logout       | delete local credentials                     |
 | count        | list all playlists with songs count and tags |
 | find "query" | find query in all playlist                   |

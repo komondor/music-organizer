@@ -17,11 +17,27 @@ class _Base:
 class Utilities(_Base):
     def countTrackPerPlaylist(self):
 
+        def filterTags(rawData):
+            tags = rawData.replace(" ", "")
+            tags = tags.replace("\"", "")
+            tags = re.search(r"(?<=Tags:\[)(.*?)(?=\])", tags)
+            tags = re.split(",", tags.group(0))
+            return tags
+
+        def renameBagsPlaylists(playlist):
+
+            if playlist['name'].startswith("("):
+                playlist_count = 1000 - len(playlist['tracks'])
+                playlist_name = '{:04d}'.format(playlist_count)
+                playlist_id = playlist['id']
+                new_name = "("+str(playlist_name)+")"
+                self.collection.edit_playlist(playlist_id, new_name)
+
         allplaylist = super().getAllplaylists()
         list = []
         for playlist in allplaylist:
-            self.renameBags(playlist)
-            tagsText = self.filterTags(playlist['description'])
+            renameBagsPlaylists(playlist)
+            tagsText = filterTags(playlist['description'])
             list.append([playlist['name'], len(
                 playlist['tracks']), tagsText])
 
@@ -29,8 +45,19 @@ class Utilities(_Base):
 
     def queryPlaylist(self, query):
 
+        def removePlaylistWithParantheses():
+            count = 0
+            allplaylist = super().getAllplaylists()
+            for playlist in allplaylist:
+                if playlist['name'].startswith("("):
+                    count = count + 1
+            if count > 0:
+                allplaylist.pop(count-1)
+
+            return allplaylist
+
         result = []
-        allplaylist = self.removePlaylistWithParantheses()
+        allplaylist = removePlaylistWithParantheses()
 
         for playlist in allplaylist:
 
@@ -52,32 +79,3 @@ class Utilities(_Base):
                     result.append(song)
 
         print(tabulate(result, headers=["playlist", "title", "artist"]))
-
-    def filterTags(self, rawData):
-        tags = rawData.replace(" ", "")
-        tags = tags.replace("\"", "")
-        tags = re.search("(?<=Tags:\[)(.*?)(?=\])", tags)
-        tags = re.split(",", tags.group(0))
-        return tags
-
-    def renameBags(self, playlist):
-
-        if playlist['name'].startswith("("):
-            playlist_count = len(playlist['tracks'])
-            # playlist_count_remaining = 1000-playlist_count
-            # playlist_name = '{:04d}'.format(playlist_count_remaining)
-            playlist_name = '{:04d}'.format(playlist_count)
-            playlist_id = playlist['id']
-            new_name = "("+str(playlist_name)+")"
-            self.collection.edit_playlist(playlist_id, new_name)
-
-    def removePlaylistWithParantheses(self):
-        count = 0
-        allplaylist = super().getAllplaylists()
-        for playlist in allplaylist:
-            if playlist['name'].startswith("("):
-                count = count + 1
-        if count > 0:
-            allplaylist.pop(count-1)
-
-        return allplaylist
